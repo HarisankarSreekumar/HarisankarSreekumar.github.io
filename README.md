@@ -1,4 +1,4 @@
-# harisankarsreekumar.github.io
+# HarisankarSreekumar.github.io
 
 My personal portfolio site — live at [harisankarsreekumar.github.io](https://harisankarsreekumar.github.io).
 
