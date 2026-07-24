@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harisankar Sreekumar — Data Analyst → Data Scientist</title>
+<meta name="description" content="Portfolio of Harisankar Sreekumar — Data Analyst transitioning to Data Scientist. Python, SQL, ML, Power BI, ETL.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B1220;
+    --ink-2:#111B2E;
+    --paper:#E8ECF3;
+    --paper-dim:#9AA7BD;
+    --green:#3FA66B;
+    --green-glow:#3FA66B55;
+    --amber:#E3A008;
+    --coral:#E1523D;
+    --line:#25324A;
+    --radius:10px;
+    --display:'Space Grotesk',sans-serif;
+    --body:'Inter',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:var(--body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  .wrap{max-width:1040px; margin:0 auto; padding:0 28px;}
+  section{padding:96px 0;}
+  @media (max-width:640px){ section{padding:64px 0;} }
+
+  /* ---- flag dot, the signature element ---- */
+  .flag{
+    display:inline-block; width:9px; height:9px; border-radius:50%;
+    box-shadow:0 0 0 3px transparent;
+    flex-shrink:0;
+  }
+  .flag.green{background:var(--green); box-shadow:0 0 10px var(--green-glow);}
+  .flag.amber{background:var(--amber); box-shadow:0 0 10px #E3A00855;}
+  .flag.coral{background:var(--coral); box-shadow:0 0 10px #E1523D55;}
+
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--paper-dim); display:flex; align-items:center; gap:8px; margin-bottom:18px;
+  }
+
+  /* ---- nav ---- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(11,18,32,0.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .wrap{display:flex; align-items:center; justify-content:space-between; padding:16px 28px;}
+  .nav-name{font-family:var(--display); font-weight:600; font-size:16px;}
+  .nav-links{display:flex; gap:28px; font-size:14px; color:var(--paper-dim);}
+  .nav-links a{text-decoration:none; transition:color .2s;}
+  .nav-links a:hover{color:var(--paper);}
+  .nav-links a:focus-visible{outline:2px solid var(--green); outline-offset:4px; border-radius:4px;}
+  @media (max-width:640px){ .nav-links{display:none;} }
+
+  /* ---- hero ---- */
+  .hero{padding-top:120px; padding-bottom:80px;}
+  .hero h1{
+    font-family:var(--display); font-weight:700;
+    font-size:clamp(38px, 6vw, 64px); line-height:1.05; letter-spacing:-0.01em;
+    margin-bottom:20px;
+  }
+  .hero .role-line{
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    font-family:var(--mono); font-size:clamp(14px,2vw,17px); color:var(--paper-dim);
+    margin-bottom:32px;
+  }
+  .transition-flag{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:13px; padding:4px 10px;
+    border:1px solid var(--line); border-radius:999px; color:var(--paper-dim);
+  }
+  .transition-flag .flag{animation:pulseFlag 3.2s ease-in-out infinite;}
+  @keyframes pulseFlag{
+    0%,100%{background:var(--amber); box-shadow:0 0 10px #E3A00855;}
+    50%{background:var(--green); box-shadow:0 0 10px var(--green-glow);}
+  }
+  .hero p.lede{
+    max-width:620px; font-size:17px; color:#C7D0E0; margin-bottom:40px;
+  }
+  .hero-actions{display:flex; gap:14px; flex-wrap:wrap;}
+  .btn{
+    font-family:var(--body); font-weight:600; font-size:14px;
+    padding:12px 22px; border-radius:8px; text-decoration:none;
+    display:inline-flex; align-items:center; gap:8px;
+    transition:transform .15s ease, background .2s ease, border-color .2s ease;
+    border:1px solid transparent;
+  }
+  .btn:focus-visible{outline:2px solid var(--green); outline-offset:2px;}
+  .btn-primary{background:var(--green); color:#08150F;}
+  .btn-primary:hover{transform:translateY(-2px); background:#4bbf7c;}
+  .btn-ghost{border-color:var(--line); color:var(--paper);}
+  .btn-ghost:hover{border-color:var(--paper-dim); transform:translateY(-2px);}
+
+  /* ---- section headers ---- */
+  h2.section-title{
+    font-family:var(--display); font-weight:600; font-size:clamp(24px,3vw,32px);
+    margin-bottom:8px;
+  }
+  .section-sub{color:var(--paper-dim); font-size:15px; margin-bottom:48px; max-width:560px;}
+
+  /* ---- reveal on scroll ---- */
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  /* ---- about ---- */
+  .about-grid{display:grid; grid-template-columns:1.4fr 1fr; gap:48px;}
+  @media (max-width:760px){ .about-grid{grid-template-columns:1fr;} }
+  .about-text p{color:#C7D0E0; margin-bottom:16px; font-size:15.5px;}
+  .stat-block{
+    border:1px solid var(--line); border-radius:var(--radius); padding:22px;
+    background:linear-gradient(180deg, var(--ink-2), transparent);
+  }
+  .stat-block + .stat-block{margin-top:16px;}
+  .stat-num{font-family:var(--mono); font-size:26px; color:var(--green); font-weight:500;}
+  .stat-label{font-size:13px; color:var(--paper-dim); margin-top:4px;}
+
+  /* ---- experience timeline ---- */
+  .timeline{border-left:1px solid var(--line); margin-left:6px;}
+  .tl-item{position:relative; padding:0 0 40px 32px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{
+    content:""; position:absolute; left:-5.5px; top:4px;
+    width:10px; height:10px; border-radius:50%; background:var(--paper);
+    border:2px solid var(--ink);
+  }
+  .tl-item.current::before{background:var(--green); box-shadow:0 0 10px var(--green-glow);}
+  .tl-role{font-family:var(--display); font-weight:600; font-size:18px;}
+  .tl-org{color:var(--green); font-size:14.5px; margin-bottom:2px;}
+  .tl-meta{font-family:var(--mono); font-size:12.5px; color:var(--paper-dim); margin-bottom:12px;}
+  .tl-item ul{padding-left:18px; color:#C7D0E0; font-size:14.5px;}
+  .tl-item li{margin-bottom:6px;}
+  .tl-item.collapsed ul{display:none;}
+  .tl-toggle{
+    font-family:var(--mono); font-size:12px; color:var(--paper-dim);
+    background:none; border:none; cursor:pointer; padding:0; margin-top:4px;
+    text-decoration:underline; text-underline-offset:3px;
+  }
+  .tl-toggle:hover{color:var(--paper);}
+
+  /* ---- projects ---- */
+  .projects-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  @media (max-width:900px){ .projects-grid{grid-template-columns:1fr;} }
+  .card{
+    border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px; background:var(--ink-2);
+    display:flex; flex-direction:column; gap:14px;
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .card:hover{border-color:#3a4a68; transform:translateY(-3px);}
+  .card-status{display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11.5px; color:var(--paper-dim); text-transform:uppercase; letter-spacing:0.06em;}
+  .card h3{font-family:var(--display); font-size:19px; font-weight:600;}
+  .card p{font-size:14px; color:#C7D0E0;}
+  .card .tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:auto;}
+  .tag{
+    font-family:var(--mono); font-size:11px; color:var(--paper-dim);
+    border:1px solid var(--line); padding:3px 8px; border-radius:6px;
+  }
+  .card-links{display:flex; gap:14px; font-size:13px; margin-top:6px;}
+  .card-links a{text-decoration:none; color:var(--green); font-weight:500;}
+  .card-links a:hover{text-decoration:underline;}
+  .card-note{
+    font-size:13px; color:var(--paper-dim); border-top:1px solid var(--line);
+    padding-top:12px; margin-top:2px;
+  }
+
+  /* ---- skills ---- */
+  .skills-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:24px;}
+  @media (max-width:760px){ .skills-grid{grid-template-columns:repeat(2,1fr);} }
+  .skill-group h4{
+    font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--paper-dim); margin-bottom:12px;
+  }
+  .skill-chip-list{display:flex; flex-wrap:wrap; gap:6px;}
+  .chip{
+    font-size:13px; padding:5px 10px; border-radius:6px;
+    background:#152238; border:1px solid var(--line); color:var(--paper);
+  }
+
+  /* ---- education / certs ---- */
+  .edu-grid{display:grid; grid-template-columns:1fr 1fr; gap:32px;}
+  @media (max-width:760px){ .edu-grid{grid-template-columns:1fr;} }
+  .edu-item{border-left:2px solid var(--green); padding-left:16px; margin-bottom:20px;}
+  .edu-item h4{font-family:var(--display); font-size:15.5px; font-weight:600;}
+  .edu-item .meta{font-family:var(--mono); font-size:12.5px; color:var(--paper-dim);}
+  .cert-list{list-style:none;}
+  .cert-list li{
+    display:flex; align-items:center; gap:10px; font-size:14px; color:#C7D0E0;
+    padding:8px 0; border-bottom:1px solid var(--line);
+  }
+  .cert-list li:last-child{border-bottom:none;}
+
+  /* ---- footer / contact ---- */
+  footer{border-top:1px solid var(--line); padding:64px 0 40px;}
+  .footer-grid{display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:24px;}
+  .footer-links{display:flex; gap:20px; font-size:14px;}
+  .footer-links a{text-decoration:none; color:var(--paper-dim); transition:color .2s;}
+  .footer-links a:hover{color:var(--green);}
+  .copyright{font-family:var(--mono); font-size:12px; color:var(--paper-dim); margin-top:32px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="nav-name">Harisankar Sreekumar</div>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <div class="eyebrow"><span class="flag green"></span> Open to Data Analyst / Data Scientist roles — UK</div>
+  <h1>Harisankar Sreekumar</h1>
+  <div class="role-line">
+    <span class="transition-flag"><span class="flag amber"></span> Data Analyst → Data Scientist</span>
+    <span>Python · SQL · ML · Power BI · GCP · ETL</span>
+  </div>
+  <p class="lede">
+    I spend my days turning messy institutional data into decisions — and my evenings building the kind of
+    machine learning systems I want to be trusted with next. Currently at the University of Warwick;
+    MSc in Data Analytics (Distinction) from London Metropolitan University.
+  </p>
+  <div class="hero-actions">
+    <a class="btn btn-primary" href="#projects">View projects</a>
+    <a class="btn btn-ghost" href="Harisankar_Sreekumar_Resume.pdf" download>Download résumé</a>
+    <a class="btn btn-ghost" href="https://github.com/HarisankarSreekumar" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <div class="eyebrow"><span class="flag green"></span> About</div>
+    <h2 class="section-title reveal">Full analytics lifecycle, end to end</h2>
+    <p class="section-sub reveal">From database engineering to regulatory reporting to model development — the same instinct applied at every layer.</p>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>Data Analyst with 3+ years across the full analytics lifecycle — database engineering, ETL pipelines,
+        machine learning model development, and regulatory reporting. At the University of Warwick, my work sits at
+        the intersection of data engineering, education policy, and institutional strategy: an automated Python
+        pipeline consolidating 200+ institutional reports, a university-wide departmental performance review
+        benchmarked against OfS regulatory standards (now the institutional baseline for internal quality reviews),
+        and SQL-driven extraction from SITS across regulatory, survey, and operational pipelines.</p>
+        <p>My MSc dissertation built an end-to-end XGBoost forecasting system for retail demand, trained on
+        300,000+ transaction records — evaluating LSTM, DeepAR, and N-BEATS before selecting XGBoost as the
+        strongest fit for sparse retail time-series data. Before analytics, I spent 2+ years at Tata Consultancy
+        Services on a global retail platform for Nielsen, owning SQL database development and full-stack work in
+        C#, .NET, and JavaScript.</p>
+      </div>
+      <div class="reveal">
+        <div class="stat-block">
+          <div class="stat-num">200+</div>
+          <div class="stat-label">institutional reports consolidated by one automated pipeline</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num">R² 0.999</div>
+          <div class="stat-label">XGBoost forecasting accuracy, normal-sales regime</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num">300K+</div>
+          <div class="stat-label">transaction records behind the dissertation model</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="eyebrow"><span class="flag amber"></span> Experience</div>
+    <h2 class="section-title reveal">Where the work happened</h2>
+    <p class="section-sub reveal">Newest first — the green marker is where I am right now.</p>
+    <div class="timeline reveal">
+
+      <div class="tl-item current collapsed">
+        <div class="tl-role">Data Analyst</div>
+        <div class="tl-org">University of Warwick</div>
+        <div class="tl-meta">Dec 2025 — Present · Coventry</div>
+        <ul>
+          <li>Engineered an automated Python pipeline to extract and consolidate 200+ institutional reports, reallocating analyst capacity to higher-value strategic work.</li>
+          <li>Led a university-wide departmental performance review benchmarked against OfS regulatory standards — now the institutional baseline for internal quality reviews.</li>
+          <li>Write and maintain SQL queries against SITS underpinning regulatory, survey, and operational reporting pipelines.</li>
+          <li>Scoping a machine learning risk assessment model to flag early indicators of departmental underperformance against OfS thresholds.</li>
+          <li>Support TEF submissions and analyse NSS/PTES/PRES survey data; collaborate with Warwick Data Labs on dashboards across academic departments.</li>
+        </ul>
+        <button class="tl-toggle" aria-expanded="false">Show details</button>
+      </div>
+
+      <div class="tl-item collapsed">
+        <div class="tl-role">Research Project — Cognitive Problem-Solving Analysis</div>
+        <div class="tl-org">London Metropolitan University</div>
+        <div class="tl-meta">Aug 2025 — Nov 2025 · London</div>
+        <ul>
+          <li>Quantitative analysis on 1,400+ trial-level datasets in a cognitive psychology study on problem-solving and analogical transfer.</li>
+          <li>Used Python (pandas, seaborn, matplotlib) for statistical summaries, significance testing, and publication-ready visualisations.</li>
+          <li>Investigated the effect of instructional interventions on task success rates for manuscript preparation.</li>
+        </ul>
+        <button class="tl-toggle" aria-expanded="false">Show details</button>
+      </div>
+
+      <div class="tl-item collapsed">
+        <div class="tl-role">Data Administrator — International Student Records</div>
+        <div class="tl-org">City St George's, University of London</div>
+        <div class="tl-meta">Aug 2025 — Oct 2025 · London</div>
+        <ul>
+          <li>Validated and managed international student data in SITS, ensuring Home Office CAS compliance.</li>
+          <li>Systematic data cleansing ahead of regulatory inspection periods.</li>
+          <li>Provided SITS process training across departments.</li>
+        </ul>
+        <button class="tl-toggle" aria-expanded="false">Show details</button>
+      </div>
+
+      <div class="tl-item collapsed">
+        <div class="tl-role">Data Analyst (promoted from Assistant System Engineer)</div>
+        <div class="tl-org">Tata Consultancy Services</div>
+        <div class="tl-meta">Nov 2021 — Jan 2024 · Kochi</div>
+        <ul>
+          <li>Owned end-to-end database development for a global retail analytics application built for Nielsen.</li>
+          <li>Sole owner of server-side data purge operations across all production and test environments.</li>
+          <li>Led staging server deployment activities across the application lifecycle.</li>
+          <li>Full-stack development and bug-fixing in C#, .NET, HTML, and JavaScript.</li>
+          <li>Promoted within 12 months on the back of increased ownership of database and deployment responsibilities.</li>
+        </ul>
+        <button class="tl-toggle" aria-expanded="false">Show details</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="eyebrow"><span class="flag green"></span> Projects</div>
+    <h2 class="section-title reveal">Three ways of working with data</h2>
+    <p class="section-sub reveal">A production AI system, an institutional analytics pipeline, and a research forecasting model — status flags below mark where each one stands.</p>
+    <div class="projects-grid reveal">
+
+      <div class="card">
+        <div class="card-status"><span class="flag green"></span> Shipped &amp; documented</div>
+        <h3>Local RAG Agent</h3>
+        <p>A fully local, privacy-first document search and Q&amp;A agent. Point it at any folder, ask questions in
+        plain English, get cited answers — no cloud calls, nothing leaves the machine. Stress-tested on a real
+        360-file personal archive, which surfaced and led to fixing two genuine RAG limitations: semantic search's
+        blindness to recency, and a small local model's over-literal refusal of paraphrased matches.</p>
+        <div class="tags">
+          <span class="tag">Python</span><span class="tag">Ollama</span><span class="tag">ChromaDB</span>
+          <span class="tag">pydantic</span><span class="tag">Typer</span><span class="tag">pytest</span>
+        </div>
+        <div class="card-links">
+          <a href="https://github.com/HarisankarSreekumar/Local_rag_agent" target="_blank" rel="noopener">GitHub →</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-status"><span class="flag green"></span> In production</div>
+        <h3>Institutional Analytics Pipeline</h3>
+        <p>An automated Python pipeline consolidating 200+ institutional reports at the University of Warwick, plus
+        a university-wide departmental performance review benchmarked against OfS regulatory standards — now the
+        institutional baseline for internal quality reviews. SQL-driven extraction from SITS underpins regulatory,
+        survey, and operational reporting.</p>
+        <div class="tags">
+          <span class="tag">Python</span><span class="tag">SQL</span><span class="tag">Power BI</span>
+          <span class="tag">SITS</span><span class="tag">OfS reporting</span>
+        </div>
+        <div class="card-note">Institution-internal — case study available on request.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-status"><span class="flag green"></span> Research complete</div>
+        <h3>Retail Demand Forecasting</h3>
+        <p>MSc dissertation: an end-to-end XGBoost forecasting system trained on 300,000+ transaction records —
+        R² of 0.999 (normal sales) and 0.975 (promotional sales). Dual-model architecture, multi-output 3-month-ahead
+        forecasting, and a Promo Sensitivity Index classifying SKU-level campaign responsiveness. LSTM, DeepAR, and
+        N-BEATS were evaluated before selecting XGBoost as the best fit for sparse retail time-series data.</p>
+        <div class="tags">
+          <span class="tag">XGBoost</span><span class="tag">scikit-learn</span><span class="tag">pandas</span>
+          <span class="tag">LSTM</span><span class="tag">DeepAR</span><span class="tag">N-BEATS</span>
+        </div>
+        <div class="card-note">MSc Data Analytics dissertation — London Metropolitan University.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="eyebrow"><span class="flag amber"></span> Skills</div>
+    <h2 class="section-title reveal">Toolkit</h2>
+    <p class="section-sub reveal">Grouped by where they show up in the work above.</p>
+    <div class="skills-grid reveal">
+      <div class="skill-group">
+        <h4>Languages &amp; ML</h4>
+        <div class="skill-chip-list">
+          <span class="chip">Python</span><span class="chip">SQL</span><span class="chip">XGBoost</span>
+          <span class="chip">scikit-learn</span><span class="chip">pandas</span><span class="chip">C#</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h4>BI &amp; Reporting</h4>
+        <div class="skill-chip-list">
+          <span class="chip">Power BI</span><span class="chip">Tableau</span><span class="chip">Excel</span><span class="chip">DAX</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h4>Data Engineering</h4>
+        <div class="skill-chip-list">
+          <span class="chip">ETL</span><span class="chip">GCP</span><span class="chip">SITS</span><span class="chip">Snowflake</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h4>Tools</h4>
+        <div class="skill-chip-list">
+          <span class="chip">Git</span><span class="chip">GitHub</span><span class="chip">Ollama</span><span class="chip">ChromaDB</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="education">
+  <div class="wrap">
+    <div class="eyebrow"><span class="flag green"></span> Education &amp; Certifications</div>
+    <h2 class="section-title reveal">Foundations</h2>
+    <div class="edu-grid reveal">
+      <div>
+        <div class="edu-item">
+          <h4>MSc, Data Analytics — Distinction</h4>
+          <div class="meta">London Metropolitan University · Jan 2024 – May 2025</div>
+        </div>
+        <div class="edu-item">
+          <h4>BTech, Mechanical Engineering</h4>
+          <div class="meta">Sree Chitra Thirunal College of Engineering · 2017 – 2021</div>
+        </div>
+      </div>
+      <ul class="cert-list">
+        <li><span class="flag green"></span> BCG — GenAI Job Simulation</li>
+        <li><span class="flag green"></span> Everybody's Introduction to Snowflake</li>
+        <li><span class="flag green"></span> Google Analytics Certification (2026)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="eyebrow"><span class="flag green"></span> Get in touch</div>
+        <h2 class="section-title" style="margin-bottom:0;">Let's talk data.</h2>
+      </div>
+      <div class="footer-links">
+        <a href="mailto:sankarhari243@gmail.com">Email</a>
+        <a href="https://www.linkedin.com/in/harisankarsreekumar" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/HarisankarSreekumar" target="_blank" rel="noopener">GitHub</a>
+        <a href="Harisankar_Sreekumar_Resume.pdf" download>Résumé (PDF)</a>
+      </div>
+    </div>
+    <div class="copyright">© 2026 Harisankar Sreekumar — built with a fully local RAG agent's sibling site.</div>
+  </div>
+</footer>
+
+<script>
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.12});
+  revealEls.forEach(el => io.observe(el));
+
+  // timeline collapse/expand
+  document.querySelectorAll('.tl-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.tl-item');
+      const collapsed = item.classList.toggle('collapsed');
+      btn.textContent = collapsed ? 'Show details' : 'Hide details';
+      btn.setAttribute('aria-expanded', String(!collapsed));
+    });
+  });
+</script>
+
+</body>
+</html>
