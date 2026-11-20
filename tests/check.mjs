@@ -350,6 +350,18 @@ check('home: Kimball card shows the real model', async () => {
   assert(!r.todo && !r.sketch, 'placeholder sketch still present');
 });
 
+check('cv: PDF is current and clean', async () => {
+  const { execSync } = await import('node:child_process');
+  const t = execSync('pdftotext -layout Harisankar_Sreekumar_Resume.pdf -', { cwd: ROOT }).toString();
+  const hits = [...BANNED, ...PRIVATE.home, 'R2 ', 'Present\nCoventry'].filter(x => t.includes(x));
+  assert(!hits.length, `CV contains: ${hits.join(' | ')}`);
+  assert(!/0\d{4}\s?\d{6}|\+44/.test(t), 'CV contains a phone number');
+  for (const need of ['Data / BI Analyst', 'Mercor', 'Jun 2026', 'harisankarsreekumar.github.io', 'contract lifecycle', '40-working-day', 'Data With Baraa'])
+    assert(t.includes(need), `CV missing "${need}"`);
+  const pages = execSync('pdfinfo Harisankar_Sreekumar_Resume.pdf', { cwd: ROOT }).toString().match(/Pages:\s+(\d+)/)[1];
+  assert(+pages <= 2, `CV is ${pages} pages`);
+});
+
 // ---------------- runner ----------------
 const filter = process.argv[2] || '';
 browser = await chromium.launch();

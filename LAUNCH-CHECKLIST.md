@@ -6,5 +6,5 @@
 
    Blur faculty and staff names, contract IDs, counterparties and any organisation branding first. Until they're added, the case study shows labelled placeholders.
 2. **Kimball model.** ✅ Model screenshot added. Optional: add one sentence on what you changed from the tutorial.
-3. **CV.** Replace `Harisankar_Sreekumar_Resume.pdf` with the updated Data/BI CV, or change `CV_URL` in `index.html` if the filename changes.
+3. **CV.** ✅ Updated Data/BI CV added (no phone number; contracts work described without figures).
 4. Run `node tests/check.mjs`. Everything must pass.
