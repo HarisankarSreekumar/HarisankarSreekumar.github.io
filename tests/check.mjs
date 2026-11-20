@@ -324,13 +324,6 @@ check('home: Nottingham card sticks to the CV', async () => {
   assert(/ethnicity/i.test(t), 'Nottingham card should say ethnicity-based gaps');
   assert(!/20 Russell Group|sector averages/.test(t), 'Nottingham card claims unsourced benchmarking');
 });
-check('home: Kimball sketch draws no relationships and is labelled', async () => {
-  const p = await page(HOME);
-  const r = await p.evaluate(() => { const c = document.querySelector('[data-card="kimball"]'); return { lines: c.querySelectorAll('svg line').length, t: c.textContent, aria: c.querySelector('svg')?.getAttribute('aria-label') || '' }; });
-  assert(r.lines === 0, `${r.lines} relationship lines drawn`);
-  assert(/sketch/i.test(r.t), 'no visible sketch label');
-  assert(!/joins/.test(r.aria), 'aria-label states relationships');
-});
 check('pages: bottleneck wording is not causal', async () => {
   for (const f of [HOME, CASE]) {
     const t = await (await page(f)).evaluate(() => document.body.innerText);
@@ -341,6 +334,20 @@ check('case: TREATAS uses the brief wording', async () => {
   const t = await (await page(CASE)).evaluate(() => document.querySelector('#dax').textContent);
   assert(!/apply filters across/.test(t), 'invented TREATAS purpose');
   assert(/TREATAS[^.]*stage-level analysis/.test(t), 'TREATAS sentence missing brief wording');
+});
+
+// ---------------- Owner updates ----------------
+check('home: SITS expanded as the owner specified', async () => {
+  const titles = await (await page(HOME)).evaluate(() => [...document.querySelectorAll('abbr')].filter(a => a.textContent === 'SITS').map(a => a.title));
+  assert(titles.length > 0 && titles.every(t => t.startsWith('Student Information & Tracking System')), `SITS titles: ${titles}`);
+});
+check('home: Kimball card shows the real model', async () => {
+  const p = await page(HOME);
+  const r = await p.evaluate(() => { const c = document.querySelector('[data-card="kimball"]'); const i = c.querySelector('img');
+    return { src: i?.getAttribute('src'), w: i?.naturalWidth || 0, alt: i?.alt || '', todo: !!c.querySelector('[data-todo]'), sketch: /sketch/i.test(c.textContent) }; });
+  assert(r.src === 'assets/img/kimball/model.png' && r.w > 0, `model image: ${r.src} (${r.w}px)`);
+  assert(/model/i.test(r.alt), 'model image needs descriptive alt');
+  assert(!r.todo && !r.sketch, 'placeholder sketch still present');
 });
 
 // ---------------- runner ----------------

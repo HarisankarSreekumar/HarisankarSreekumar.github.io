@@ -58,7 +58,9 @@ h1.disp{font-size:clamp(40px,5.6vw,72px);font-weight:900;letter-spacing:-.035em;
 .featured-shot .pending-note{display:none}
 .featured-shot.pending .pending-note{display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--muted);border:1px dashed var(--line);padding:14px 18px;margin:24px}
 .projects{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:28px}
-.mini-schema{display:block;width:100%;height:auto;margin:2px 0 16px}
+.model-shot{display:block;margin:2px 0 16px;border:1px solid var(--line);background:#E6E6E6;cursor:zoom-in}
+.model-shot img{display:block;width:100%;height:auto}
+.model-shot:hover{border-color:var(--observed)}
 code{font-family:'IBM Plex Mono',monospace;font-size:.88em;color:var(--ink)}
 .wip{margin-top:28px;border:1px dashed var(--line);padding:22px 26px}
 .wip-h{margin-bottom:6px}
@@ -236,28 +238,19 @@ code{font-family:'IBM Plex Mono',monospace;font-size:.88em;color:var(--ink)}
       <article class="card" data-card="review">
         <div class="flag obs"><i></i> University of Warwick · internal</div>
         <h3>Departmental performance review</h3>
-        <p>Brought student outcomes, satisfaction, recruitment, resits, degree classifications and external examiner feedback from <abbr title="Strategic Information Technology Systems: the university student records system">SITS</abbr>, Evision, existing dashboards and surveys into one consistent dataset. Agreed shared KPI definitions with Heads of Department, built a Power BI dashboard with faculty and department drill-down, and benchmarked against <abbr title="Office for Students: the higher education regulator in England">OfS</abbr> thresholds and Russell Group comparators. A Python pipeline consolidated 200+ external examiner PDFs, cutting manual processing by ~50%.</p>
+        <p>Brought student outcomes, satisfaction, recruitment, resits, degree classifications and external examiner feedback from <abbr title="Student Information &amp; Tracking System: the university student records system">SITS</abbr>, Evision, existing dashboards and surveys into one consistent dataset. Agreed shared KPI definitions with Heads of Department, built a Power BI dashboard with faculty and department drill-down, and benchmarked against <abbr title="Office for Students: the higher education regulator in England">OfS</abbr> thresholds and Russell Group comparators. A Python pipeline consolidated 200+ external examiner PDFs, cutting manual processing by ~50%.</p>
         <div class="stack"><span>SQL</span><span>Python</span><span>Excel</span><span>Power BI</span></div>
         <span class="note">Internal work, so there is no public link. Happy to walk through it in an interview.</span>
       </article>
 
       <article class="card" data-card="kimball">
-        <div class="flag prd"><i></i> Modelling practice</div>
+        <div class="flag obs"><i></i> Data modelling</div>
         <h3>Kimball star schema in Power BI</h3>
-        <!-- Owner's model screenshot to replace this diagram -->
-        <svg class="mini-schema" data-todo="kimball-screenshot" viewBox="0 0 300 96" role="img"
-          aria-label="Sketch of the tables in the model: fact_sales, dim_order_flags, dim_date, an accumulating snapshot fact and a factless fact. To be replaced with a screenshot of the actual model.">
-          <g font-family="IBM Plex Mono, monospace" font-size="9.5" text-anchor="middle">
-            <rect x="100" y="8" width="100" height="24" fill="var(--panel-2)" stroke="var(--observed)"/>
-            <text x="150" y="24" fill="var(--observed)">fact_sales</text>
-            <rect x="4" y="40" width="96" height="22" fill="var(--panel-2)" stroke="var(--line)"/><text x="52" y="55" fill="var(--ink)">dim_order_flags</text>
-            <rect x="200" y="40" width="96" height="22" fill="var(--panel-2)" stroke="var(--line)"/><text x="248" y="55" fill="var(--ink)">dim_date</text>
-            <rect x="4" y="70" width="96" height="22" fill="var(--panel-2)" stroke="var(--line)"/><text x="52" y="85" fill="var(--ink)">factless fact</text>
-            <rect x="200" y="70" width="96" height="22" fill="var(--panel-2)" stroke="var(--line)"/><text x="248" y="85" fill="var(--ink)">accum. snapshot</text>
-          </g>
-        </svg>
-        <span class="note">Sketch of the tables. A screenshot of my model will replace it.</span>
-        <p>Built following Data With Baraa's Kimball modelling tutorial, then modified. A flat OLTP export becomes a star schema: <code>fact_sales</code> at line-item grain, order flags moved into a junk dimension, an accumulating snapshot fact for order-to-pay durations, a factless fact for campaign coverage, role-playing dates and dynamic row-level security.</p>
+        <a class="model-shot" href="assets/img/kimball/model.png" aria-label="Open the full-size model diagram">
+          <img src="assets/img/kimball/model.png" width="1187" height="1093" loading="lazy"
+            alt="Power BI model view: six fact tables (fact_sales, fact_order_process, fact_campaign, fact_promotion_coverage, fact_inventory, fact_sales_targets) around dim_date, dim_product, dim_customer, dim_campaign, dim_order_flags and dim_location, plus a security table for row-level security.">
+        </a>
+        <p>Built following Data With Baraa's Kimball modelling tutorial, then modified. Six fact tables share six dimensions. <code>fact_sales</code> sits at the lowest transactional grain, with order flags in a junk dimension and bill-to and ship-to cities as active and inactive role-playing links to <code>dim_location</code>. An accumulating snapshot tracks order-to-pay durations, a factless fact covers which products each campaign includes, inventory is unpivoted into monthly rows, and a security table drives dynamic row-level security.</p>
         <div class="stack"><span>Power BI</span><span>Power Query</span><span>DAX</span><span>RLS</span></div>
       </article>
 
@@ -329,7 +322,7 @@ code{font-family:'IBM Plex Mono',monospace;font-size:.88em;color:var(--ink)}
           <div class="org">University of Warwick</div>
           <ul>
             <li>Led analysis for a university-wide departmental performance review, combining student outcomes, satisfaction, recruitment, resits, degree classifications and external examiner feedback to flag potential underperformance ahead of the wider <abbr title="Teaching Excellence Framework: the national assessment of teaching quality">TEF</abbr> process.</li>
-            <li>Cleaned and integrated data from <abbr title="Strategic Information Technology Systems: the university student records system">SITS</abbr>, Evision, existing Power BI dashboards and internal surveys using SQL, Python and Excel.</li>
+            <li>Cleaned and integrated data from <abbr title="Student Information &amp; Tracking System: the university student records system">SITS</abbr>, Evision, existing Power BI dashboards and internal surveys using SQL, Python and Excel.</li>
             <li>Built a Power BI dashboard with university-level KPIs and drill-down to faculty and department.</li>
             <li>Benchmarked departments against <abbr title="Office for Students: the higher education regulator in England">OfS</abbr> thresholds, university standards, previous-year results and Russell Group comparators.</li>
             <li>Agreed common KPI definitions with Heads of Department and Quality Assurance Managers, and built a unified department reference table to standardise naming and codes.</li>
@@ -367,9 +360,9 @@ code{font-family:'IBM Plex Mono',monospace;font-size:.88em;color:var(--ink)}
           <h3>Data Administrator, International Student Records</h3>
           <div class="org">City St George's, University of London</div>
           <ul>
-            <li>Validated and managed international student data in <abbr title="Strategic Information Technology Systems: the university student records system">SITS</abbr> to meet Home Office <abbr title="Confirmation of Acceptance for Studies">CAS</abbr> requirements.</li>
+            <li>Validated and managed international student data in <abbr title="Student Information &amp; Tracking System: the university student records system">SITS</abbr> to meet Home Office <abbr title="Confirmation of Acceptance for Studies">CAS</abbr> requirements.</li>
             <li>Cleansed and standardised student records ahead of regulatory inspection periods.</li>
-            <li>Trained departmental colleagues on <abbr title="Strategic Information Technology Systems: the university student records system">SITS</abbr> processes and resolved cross-department record queries.</li>
+            <li>Trained departmental colleagues on <abbr title="Student Information &amp; Tracking System: the university student records system">SITS</abbr> processes and resolved cross-department record queries.</li>
           </ul>
         </div>
       </article>
@@ -414,7 +407,7 @@ code{font-family:'IBM Plex Mono',monospace;font-size:.88em;color:var(--ink)}
       <section><h4>Engineering &amp; automation</h4><ul>
         <li><i></i>ETL</li><li><i></i>Python pipelines</li><li><i></i>PDF extraction</li><li><i></i>Google Cloud (GCP)</li><li class="b"><i></i>Snowflake</li></ul></section>
       <section><h4>Databases</h4><ul>
-        <li><i></i>SQL Server</li><li><i></i>Stored procedures</li><li><i></i><abbr title="Strategic Information Technology Systems: the university student records system">SITS</abbr></li><li><i></i>Evision</li></ul></section>
+        <li><i></i>SQL Server</li><li><i></i>Stored procedures</li><li><i></i><abbr title="Student Information &amp; Tracking System: the university student records system">SITS</abbr></li><li><i></i>Evision</li></ul></section>
       <section><h4>Tools</h4><ul>
         <li><i></i>Git · GitHub</li><li><i></i>Bitbucket</li><li><i></i>Jira</li><li><i></i>Ollama · ChromaDB</li></ul></section>
       <section><h4>Governance</h4><ul>
