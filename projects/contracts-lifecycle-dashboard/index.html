@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contracts Lifecycle &amp; Performance Analysis · Harisankar Sreekumar</title>
+<meta name="description" content="Power BI case study: modelling ~6,500 contract records to measure performance against a 40-working-day target, track the open backlog and find the lifecycle bottleneck.">
+<meta property="og:title" content="Contracts Lifecycle &amp; Performance Analysis · Power BI case study">
+<meta property="og:description" content="Dimensional model, DAX working-day SLA logic and a two-page Power BI dashboard on ~6,500 contract records.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://harisankarsreekumar.github.io/projects/contracts-lifecycle-dashboard/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@200;300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<script src="../../assets/js/lightbox.js" defer></script>
+<style>
+.cs-hero{padding:48px 0 56px}
+.back{display:flex;width:max-content;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-decoration:none;margin-bottom:28px}
+.back:hover{color:var(--observed)}
+.cs-hero h1{font-size:clamp(34px,5vw,64px);font-weight:900;letter-spacing:-.03em;max-width:18ch;margin-bottom:20px}
+.cs-meta{display:flex;flex-wrap:wrap;gap:8px 22px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:22px}
+.cs-meta b{color:var(--ink);font-weight:500}
+.cs-intro{max-width:64ch;color:var(--body);font-size:16.5px}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);margin-top:40px;border:1px solid var(--line);background:var(--panel)}
+.kpis>div{padding:18px 18px 20px;border-left:1px solid var(--line)}
+.kpis>div:first-child{border-left:none}
+.kpis .v{font-family:'Archivo',sans-serif;font-stretch:112%;font-weight:800;font-size:26px;letter-spacing:-.02em;color:var(--observed)}
+.kpis .k{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.45}
+.sec .body{color:var(--body);max-width:66ch;font-size:15.5px}
+.sec .body p+p{margin-top:14px}
+.qs{list-style:none;display:grid;grid-template-columns:repeat(2,1fr);gap:10px 32px;margin-top:22px;max-width:900px}
+.qs li{color:var(--body);font-size:15px;padding-left:20px;position:relative}
+.qs li::before{content:"?";position:absolute;left:0;top:0;font-family:'IBM Plex Mono',monospace;color:var(--observed)}
+.flow{list-style:none;counter-reset:f;display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.flow li{counter-increment:f;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;border:1px solid var(--line);background:var(--panel);padding:10px 14px;display:flex;align-items:center;gap:10px}
+.flow li::before{content:counter(f);color:var(--observed);font-weight:500}
+.flow li:not(:last-child)::after{content:"→";color:var(--muted);margin-left:6px}
+.prep{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:28px}
+.prep div{background:var(--panel);padding:20px 22px}
+.prep h3{font-family:'Archivo',sans-serif;font-stretch:112%;font-weight:700;font-size:16px;margin-bottom:6px}
+.prep p{font-size:14px;color:var(--body)}
+.model-wrap{margin-top:28px;border:1px solid var(--line);background:var(--panel);overflow-x:auto}
+#model{display:block;min-width:640px;width:100%;height:auto}
+#model text{font-family:'IBM Plex Mono',monospace}
+.model-key{display:flex;flex-wrap:wrap;gap:8px 24px;padding:12px 18px;border-top:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--muted)}
+.model-key i{display:inline-block;width:22px;height:0;border-top:2px solid var(--ink);vertical-align:middle;margin-right:8px}
+.model-key i.dash{border-top:2px dashed var(--predicted)}
+.rels{list-style:none;margin-top:22px;display:grid;gap:8px;max-width:72ch}
+.rels li{font-size:14.5px;color:var(--body);padding-left:18px;position:relative}
+.rels li::before{content:"";position:absolute;left:0;top:11px;width:8px;height:1px;background:var(--observed)}
+details{border:1px solid var(--line);background:var(--panel);margin-top:12px;max-width:900px}
+details+details{margin-top:8px}
+summary{cursor:pointer;padding:16px 20px;font-family:'Archivo',sans-serif;font-stretch:112%;font-weight:700;font-size:16px;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:'IBM Plex Mono',monospace;color:var(--observed)}
+details[open] summary::after{content:"−"}
+details .d-body{padding:0 20px 20px;color:var(--body);font-size:14.5px}
+details .d-body p+p,details .d-body p+ul,details .d-body ul+p{margin-top:10px}
+details dl{display:grid;grid-template-columns:max-content 1fr;gap:8px 18px}
+details dt{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--observed)}
+details .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+details h4{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:400;margin-bottom:8px}
+details ul{list-style:none;display:grid;gap:4px}
+details code{font-family:'IBM Plex Mono',monospace;font-size:.9em;color:var(--ink)}
+.shots{display:grid;gap:36px;margin-top:30px}
+.shot{border:1px solid var(--line);background:var(--panel)}
+.shot .frame{background:var(--panel-2);border-bottom:1px solid var(--line);min-height:200px;display:flex;align-items:center;justify-content:center}
+.shot .frame img{display:block;width:100%;height:auto}
+.shot .ph{display:none;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.04em;color:var(--muted);border:1px dashed var(--line);padding:16px 20px;margin:28px;max-width:52ch;text-align:center;line-height:1.6}
+.enlarge{all:unset;display:block;width:100%;cursor:zoom-in}
+.enlarge:focus-visible{outline:2px solid var(--predicted);outline-offset:-2px}
+.lightbox{border:1px solid var(--line);background:var(--substrate);padding:0;max-width:96vw;max-height:94vh;margin:auto}
+.lightbox::backdrop{background:rgba(4,6,12,.86)}
+.lightbox img{display:block;max-width:96vw;max-height:calc(94vh - 44px);width:auto;height:auto}
+.lb-close{display:block;margin-left:auto;background:none;border:none;border-bottom:1px solid var(--line);width:100%;text-align:right;padding:12px 16px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);cursor:pointer}
+.shot.pending .ph{display:block}
+.shot figcaption{padding:20px 22px}
+.shot h3{font-family:'Archivo',sans-serif;font-stretch:112%;font-weight:700;font-size:19px;margin-bottom:6px}
+.shot .q{font-style:italic;color:var(--ink);margin-bottom:10px;font-size:15px}
+.shot ul{list-style:none;display:grid;grid-template-columns:repeat(2,1fr);gap:4px 28px}
+.shot li{font-size:14px;color:var(--body);padding-left:16px;position:relative}
+.shot li::before{content:"";position:absolute;left:0;top:10px;width:7px;height:1px;background:var(--muted)}
+.find{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:28px}
+.find div{background:var(--panel);padding:22px 24px}
+.find h3{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:400;margin-bottom:8px}
+.find p{color:var(--body);font-size:15px}
+.find b{color:var(--observed);font-weight:600}
+.recs{counter-reset:r;list-style:none;display:grid;gap:12px;margin-top:22px;max-width:72ch}
+.recs li{counter-increment:r;padding-left:34px;position:relative;color:var(--body);font-size:15px}
+.recs li::before{content:counter(r,decimal-leading-zero);position:absolute;left:0;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--predicted);top:2px}
+.skillcols{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:26px}
+.skillcols div{background:var(--panel);padding:20px 22px}
+.skillcols h3{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:400;margin-bottom:10px}
+.skillcols ul{list-style:none;display:grid;gap:6px;font-size:14px;color:var(--ink)}
+.cs-end{display:flex;flex-wrap:wrap;gap:10px;margin:56px 0 64px}
+@media(max-width:960px){.kpis{grid-template-columns:repeat(2,1fr)}.kpis>div{border-left:none;border-top:1px solid var(--line)}.kpis>div:nth-child(-n+2){border-top:none}.kpis>div:nth-child(even){border-left:1px solid var(--line)}
+  .prep,.skillcols{grid-template-columns:repeat(2,1fr)}details .cols{grid-template-columns:1fr}}
+@media(max-width:640px){.kpis,.prep,.skillcols,.find,.qs,.shot ul{grid-template-columns:1fr}.kpis>div{border-left:none!important;border-top:1px solid var(--line)}.kpis>div:first-child{border-top:none}
+  details dl{grid-template-columns:1fr;gap:2px}details dd{margin-bottom:8px}.flow li:not(:last-child)::after{display:none}}
+</style>
+</head>
+<body>
+
+<header class="topnav">
+  <div class="in-wrap">
+    <a class="nm" href="../../index.html"><span class="full">Harisankar Sreekumar</span><span class="short">HS</span></a>
+    <nav aria-label="Primary">
+      <a href="../../index.html#work" aria-current="page">Work</a>
+      <a href="../../index.html#experience">Experience</a>
+      <a href="../../index.html#skills">Skills</a>
+      <a href="../../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<div class="shell">
+<main class="wrap">
+
+  <section class="cs-hero" id="overview" aria-labelledby="t">
+    <a class="back" data-back href="../../index.html">&larr; All work</a>
+    <div class="flag obs"><i></i> Case study · Business intelligence</div>
+    <h1 class="disp" id="t">Contracts Lifecycle &amp; Performance Analysis</h1>
+    <div class="cs-meta"><span><b>Context</b> a UK university's contracts process</span><span><b>Built in</b> Power BI · Power Query · DAX</span><span><b>Output</b> two-page interactive dashboard</span></div>
+    <h2 class="eyebrow">Overview</h2>
+    <p class="cs-intro">I turned ~6,500 raw contract records into a dimensional model and a two-page Power BI dashboard. It shows how many contracts meet a 40-working-day completion target, how large the overdue backlog is, and where in the lifecycle the largest delays sit. The goal was operational insight that helps teams decide where to allocate resources and fix the process. Built during a data analyst role; the organisation is not named and figures are rounded.</p>
+
+    <div class="kpis">
+      <div data-kpi><div class="v">~6,500</div><div class="k">contract records modelled</div></div>
+      <div data-kpi><div class="v">~56%</div><div class="k">of assessable completed contracts breached the 40-working-day target</div></div>
+      <div data-kpi><div class="v">~50</div><div class="k">working days median completion (average ~82) vs a 40-day target</div></div>
+      <div data-kpi><div class="v">~65%</div><div class="k">of open contracts already overdue</div></div>
+      <div data-kpi><div class="v">~26</div><div class="k">days median from progressed to pending signature: the bottleneck</div></div>
+    </div>
+  </section>
+
+  <section class="sec rv" id="problem">
+    <div class="eyebrow">01</div>
+    <h2 class="disp">Business problem</h2>
+    <div class="body"><p>A contract moves through request, allocation, initiation, progression, signature, completion and sometimes termination. Without one consolidated view, management couldn't easily answer basic operational questions:</p></div>
+    <ul class="qs">
+      <li>How many contracts are being processed?</li>
+      <li>What share of completed contracts meet the 40-working-day target?</li>
+      <li>How many have breached it?</li>
+      <li>How many remain open, and how many of those are overdue?</li>
+      <li>Which stages contribute most to delays?</li>
+      <li>Do some faculties or contract types see disproportionate delays?</li>
+      <li>Where should teams prioritise process improvements?</li>
+    </ul>
+  </section>
+
+  <section class="sec rv" id="workflow">
+    <div class="eyebrow">02</div>
+    <h2 class="disp">Workflow</h2>
+    <ol class="flow">
+      <li>Source data</li><li>Power Query</li><li>Transformation</li><li>Dimensional model</li><li>DAX measures</li><li>Power BI dashboard</li><li>Business insights</li>
+    </ol>
+  </section>
+
+  <section class="sec rv" id="prep">
+    <div class="eyebrow">03</div>
+    <h2 class="disp">Data preparation</h2>
+    <div class="body"><p>Each contract has a unique <code>CONTRACT_ID</code>, a status, a faculty, a contract type and eight lifecycle milestone dates, from <code>DATE_REQUESTED</code> through <code>DATE_ALLOCATED</code>, <code>DATE_INITIATED</code>, <code>DATE_PROGRESSED</code>, <code>DATE_PENDING_SIGNATURE</code>, <code>DATE_FULLY_SIGNED</code> and <code>DATE_COMPLETED</code> to <code>DATE_TERMINATED</code>, plus <code>CREATED</code> and <code>UPDATED</code> record fields. Power Query prepared it before modelling:</p></div>
+    <div class="prep">
+      <div><h3>1 · Type standardisation</h3><p>Converted lifecycle milestone columns to proper date types.</p></div>
+      <div><h3>2 · Missing dates</h3><p>Identified missing milestone dates, mostly contracts that hadn't reached that stage yet.</p></div>
+      <div><h3>3 · Quality flags</h3><p>Kept missing and invalid date records where appropriate, flagged so incomplete lifecycles aren't mistaken for valid completed ones.</p></div>
+      <div><h3>4 · ID validation</h3><p>Checked contract identifiers for uniqueness and consistency.</p></div>
+      <div><h3>5 · Lifecycle restructure</h3><p>Built a separate contract-stage dataset to analyse individual milestones and stage durations.</p></div>
+      <div><h3>6 · Date validation</h3><p>Made sure dates supported chronological analysis and working-day calculations.</p></div>
+    </div>
+  </section>
+
+  <section class="sec rv" id="model-sec">
+    <div class="eyebrow">04</div>
+    <h2 class="disp">Data model</h2>
+    <div class="body"><p>Five tables separate contract-level facts, lifecycle-stage events, descriptive attributes and dates. Relationships run one-to-many from dimension to fact with single-direction filtering, and the two fact tables never join directly: they connect through the shared contract dimension.</p></div>
+    <div class="model-wrap">
+      <svg id="model" viewBox="0 0 760 330" role="img"
+        aria-label="Data model: Dim_date, Dim_Contracts and Dim_Contract_stages across the top; Fact_Contract and Fact_Contract_stages below. Dim_date to Fact_Contract has an active relationship on request date and an inactive one on completion date. Dim_Contracts relates to both facts. Dim_Contract_stages relates to Fact_Contract_stages. No fact-to-fact relationship.">
+        <g stroke-width="1.6" fill="none">
+          <line data-rel="active" data-from="Dim_date" data-to="Fact_Contract" x1="135" y1="74" x2="225" y2="250" stroke="var(--ink)"/>
+          <line data-rel="inactive" data-from="Dim_date" data-to="Fact_Contract" x1="85" y1="74" x2="175" y2="250" stroke="var(--predicted)" stroke-dasharray="6 5"/>
+          <line data-rel="active" data-from="Dim_Contracts" data-to="Fact_Contract" x1="360" y1="74" x2="275" y2="250" stroke="var(--ink)"/>
+          <line data-rel="active" data-from="Dim_Contracts" data-to="Fact_Contract_stages" x1="400" y1="74" x2="485" y2="250" stroke="var(--ink)"/>
+          <line data-rel="active" data-from="Dim_Contract_stages" data-to="Fact_Contract_stages" x1="645" y1="74" x2="555" y2="250" stroke="var(--ink)"/>
+        </g>
+        <g font-size="11" fill="var(--muted)">
+          <text x="196" y="160" fill="var(--ink)">request date</text>
+          <text x="22" y="186" fill="var(--predicted)">completion date</text>
+          <text x="22" y="200" fill="var(--predicted)">(inactive)</text>
+        </g>
+        <g font-size="13" text-anchor="middle">
+          <g data-table="Dim_date"><rect x="20" y="20" width="190" height="54" fill="var(--panel-2)" stroke="var(--line)"/><text x="115" y="52" fill="var(--ink)">Dim_date</text></g>
+          <g data-table="Dim_Contracts"><rect x="285" y="20" width="190" height="54" fill="var(--panel-2)" stroke="var(--line)"/><text x="380" y="52" fill="var(--ink)">Dim_Contracts</text></g>
+          <g data-table="Dim_Contract_stages"><rect x="550" y="20" width="190" height="54" fill="var(--panel-2)" stroke="var(--line)"/><text x="645" y="52" fill="var(--ink)">Dim_Contract_stages</text></g>
+          <g data-table="Fact_Contract"><rect x="140" y="250" width="190" height="54" fill="var(--panel-2)" stroke="var(--observed)"/><text x="235" y="282" fill="var(--observed)">Fact_Contract</text></g>
+          <g data-table="Fact_Contract_stages"><rect x="430" y="250" width="190" height="54" fill="var(--panel-2)" stroke="var(--observed)"/><text x="525" y="282" fill="var(--observed)">Fact_Contract_stages</text></g>
+        </g>
+      </svg>
+      <div class="model-key"><span><i></i>active, one-to-many (1 → *)</span><span><i class="dash"></i>inactive, used via DAX where needed</span><span>amber = fact · grey = dimension</span></div>
+    </div>
+    <ul class="rels">
+      <li><b>Fact_Contract</b> stores contract-level records and performance; <b>Fact_Contract_stages</b> stores one row per lifecycle stage record.</li>
+      <li><b>Dim_Contracts</b> holds contract attributes and filters both facts, so contract-level and stage-level views stay consistent.</li>
+      <li><b>Dim_Contract_stages</b> holds stage definitions and attributes.</li>
+      <li><b>Dim_date</b> is the one calendar. Request date is the active relationship; completion-date analysis uses an inactive relationship activated only where needed.</li>
+    </ul>
+  </section>
+
+  <section class="sec rv" id="dax">
+    <div class="eyebrow">05</div>
+    <h2 class="disp">DAX &amp; business logic</h2>
+    <div class="body"><p>The key requirement was measuring against <b>working days</b>, not calendar days, and keeping completed-contract performance separate from the open backlog.</p></div>
+
+    <details open>
+      <summary>Working-day calculation</summary>
+      <div class="d-body"><p>Elapsed time between lifecycle dates is calculated with <code>NETWORKDAYS</code>, so weekends don't count against the 40-working-day target. That gives a clean split between contracts that met the target and those that exceeded it.</p></div>
+    </details>
+    <details>
+      <summary>SLA definitions</summary>
+      <div class="d-body"><dl>
+        <dt>Within Target</dt><dd>Completed contracts processed in 40 working days or fewer.</dd>
+        <dt>Breached</dt><dd>Completed contracts processed in more than 40 working days.</dd>
+        <dt>Open</dt><dd>Contracts not yet completed or terminated, according to the defined status logic.</dd>
+        <dt>Overdue Open</dt><dd>Open contracts that have already passed the 40-working-day threshold.</dd>
+      </dl></div>
+    </details>
+    <details>
+      <summary>Measures</summary>
+      <div class="d-body"><div class="cols">
+        <div><h4>Contract performance</h4><ul><li>Total Contracts</li><li>Completed Contracts</li><li>Open Contracts</li><li>Breached Contracts</li><li>Contracts Within Target</li><li>Breach Percentage</li><li>Target Compliance Percentage</li><li>Average Completion Days</li></ul></div>
+        <div><h4>Backlog monitoring</h4><ul><li>Open Contracts</li><li>Overdue Open Contracts</li><li>Open Contract Ageing</li></ul></div>
+        <div><h4>Lifecycle analysis</h4><ul><li>Average Stage Duration</li><li>Median Stage Duration</li><li>Valid Stage Contracts</li><li>Stage-level performance against the 40-working-day target</li><li>Stage-level breach analysis</li></ul></div>
+      </div></div>
+    </details>
+    <details>
+      <summary>Techniques</summary>
+      <div class="d-body"><p><code>CALCULATE</code>, <code>FILTER</code>, <code>DISTINCTCOUNT</code>, <code>DIVIDE</code> and conditional calculations for the core measures, with <code>TREATAS</code> to support the more complex stage-level analysis.</p></div>
+    </details>
+  </section>
+
+  <section class="sec rv" id="dashboard">
+    <div class="eyebrow">06</div>
+    <h2 class="disp">Dashboard</h2>
+    <div class="body"><p>Deliberately two pages: an executive summary and an investigation view, so stakeholders aren't overwhelmed.</p></div>
+    <div class="shots">
+      <figure class="shot" data-src="../../assets/img/contracts/page-1-overview.png">
+        <div class="frame"><img src="../../assets/img/contracts/page-1-overview.png" alt="Page 1 · Contract Performance Overview (identifying details blurred)" onerror="this.closest('.shot').classList.add('pending');this.remove()"><p class="ph">Screenshot pending: page-1-overview.png<br>(blur faculty and staff names, contract IDs and any branding)</p></div>
+        <figcaption>
+          <h3>Page 1 · Contract Performance Overview</h3>
+          <p class="q">"How effectively is the organisation processing contracts, and where are the main performance gaps?"</p>
+          <ul><li>Total, completed and open contract volumes</li><li>Share meeting vs breaching the 40-working-day target</li><li>Average and median completion time vs the benchmark</li><li>Open and overdue open contracts</li><li>Breakdown by faculty and contract type</li></ul>
+        </figcaption>
+      </figure>
+      <figure class="shot" data-src="../../assets/img/contracts/page-2-lifecycle.png">
+        <div class="frame"><img src="../../assets/img/contracts/page-2-lifecycle.png" alt="Page 2 · Contract Lifecycle &amp; Bottleneck Analysis (identifying details blurred)" onerror="this.closest('.shot').classList.add('pending');this.remove()"><p class="ph">Screenshot pending: page-2-lifecycle.png<br>(blur faculty and staff names, contract IDs and any branding)</p></div>
+        <figcaption>
+          <h3>Page 2 · Contract Lifecycle &amp; Bottleneck Analysis</h3>
+          <p class="q">"At which stage of the contract lifecycle are the most significant delays occurring?"</p>
+          <ul><li>Average and median duration at each stage</li><li>Delays between successive milestones</li><li>Stage durations against the 40-working-day benchmark</li><li>Faculty and contract-type comparisons</li></ul>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="sec rv" id="findings">
+    <div class="eyebrow">07</div>
+    <h2 class="disp">Findings</h2>
+    <div class="find">
+      <div><h3>SLA performance</h3><p>Of assessable completed contracts, about <b>56%</b> breached the 40-working-day target and about <b>44%</b> met it: a substantial gap between actual and expected performance.</p></div>
+      <div><h3>Processing time</h3><p>Median completion was about <b>50</b> working days and the average about <b>82</b>. Because the median is also above target, delays are widespread, not just a few very long contracts.</p></div>
+      <div><h3>Open backlog</h3><p>About <b>two-thirds</b> of open contracts were already past the 40-working-day threshold, so the backlog needs monitoring alongside historical completion.</p></div>
+      <div><h3>Lifecycle bottleneck</h3><p>The step from <b>progressed</b> to <b>pending signature</b> stood out: median about <b>26</b> days, average about <b>57</b>. That points to approvals, documentation, stakeholder dependencies and internal hand-offs as places to investigate.</p></div>
+    </div>
+  </section>
+
+  <section class="sec rv" id="recommendations">
+    <div class="eyebrow">08</div>
+    <h2 class="disp">Recommendations</h2>
+    <div class="body"><p>These are recommendations drawn from the analysis, not implemented outcomes.</p></div>
+    <ol class="recs">
+      <li>Review the progression-to-signature process to understand what causes the bottleneck.</li>
+      <li>Prioritise overdue open contracts through an operational review with ageing-based escalation.</li>
+      <li>Investigate faculty and contract-type differences to see whether some categories face recurring problems.</li>
+      <li>Monitor SLA performance regularly to catch deteriorating trends early.</li>
+      <li>Review how resources are allocated across the stages where delays concentrate.</li>
+      <li>Agree consistent lifecycle data definitions and improve milestone date recording, so future reporting is more accurate.</li>
+    </ol>
+  </section>
+
+  <section class="sec rv" id="skills">
+    <div class="eyebrow">09</div>
+    <h2 class="disp">Skills demonstrated</h2>
+    <div class="skillcols">
+      <div><h3>Power BI</h3><ul><li>Interactive dashboard design</li><li>KPI development</li><li>Cross-filtering and drill-down</li><li>Dimensional modelling</li></ul></div>
+      <div><h3>DAX</h3><ul><li>CALCULATE · FILTER</li><li>DISTINCTCOUNT · DIVIDE</li><li>NETWORKDAYS · TREATAS</li><li>SLA and lifecycle logic</li></ul></div>
+      <div><h3>Power Query</h3><ul><li>Cleaning and transformation</li><li>Date standardisation</li><li>Missing-value handling</li><li>Restructuring lifecycle data</li></ul></div>
+      <div><h3>Analysis</h3><ul><li>SLA compliance monitoring</li><li>Bottleneck identification</li><li>Backlog and ageing analysis</li><li>Turning findings into recommendations</li></ul></div>
+    </div>
+    <div class="cs-end">
+      <a class="btn solid" href="../../index.html#work">More work</a>
+      <a class="btn" href="../../index.html#contact">Get in touch</a>
+    </div>
+    <footer class="foot"><span>&copy; 2026 Harisankar Sreekumar</span><span>Coventry, United Kingdom</span></footer>
+  </section>
+
+</main>
+</div>
+
+<script>
+document.documentElement.classList.add('js');
+(function(){
+  /* screenshots: mark loaded ones (lightbox binds to these); failed ones already switched to the placeholder */
+  document.querySelectorAll('.shot').forEach(function(fig){
+    var img = fig.querySelector('.frame img'); if (!img) return;
+    function ok(){ fig.classList.add('loaded'); fig.dispatchEvent(new Event('shot:loaded')); }
+    if (img.complete && img.naturalWidth > 0) ok();
+    else if (img.complete) { fig.classList.add('pending'); img.remove(); }
+    else img.addEventListener('load', ok);
+  });
+  /* reveals */
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{threshold:.08});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+})();
+</script>
+</body>
+</html>
