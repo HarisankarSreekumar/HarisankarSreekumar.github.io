@@ -56,7 +56,10 @@ h1.disp{font-size:clamp(40px,5.6vw,72px);font-weight:900;letter-spacing:-.035em;
 .featured-shot{display:flex;align-items:center;justify-content:center;border-left:1px solid var(--line);background:var(--panel-2);min-height:260px;overflow:hidden;text-decoration:none}
 .featured-shot img{width:100%;height:100%;object-fit:cover;object-position:top left;display:block}
 .featured-shot .pending-note{display:none}
-.featured-shot.pending .pending-note{display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--muted);border:1px dashed var(--line);padding:14px 18px;margin:24px}
+.featured-shot.pending .pending-note{display:block;width:100%;padding:22px}
+.feat-model{display:block;width:100%;height:auto}
+.feat-model text{font-family:'IBM Plex Mono',monospace}
+.pn-cap{display:block;margin-top:12px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:var(--muted)}
 .projects{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:28px}
 .model-shot{display:block;margin:2px 0 16px;border:1px solid var(--line);background:#E6E6E6;cursor:zoom-in}
 .model-shot img{display:block;width:100%;height:auto}
@@ -222,7 +225,28 @@ code{font-family:'IBM Plex Mono',monospace;font-size:.88em;color:var(--ink)}
       <a class="featured-shot" href="projects/contracts-lifecycle-dashboard/index.html" aria-label="Open the contracts case study">
         <img src="assets/img/contracts/page-1-overview.png" alt="Contract Performance Overview dashboard page (identifying details blurred)" loading="lazy"
           onerror="this.parentElement.classList.add('pending');this.remove()">
-        <span class="pending-note">Dashboard screenshot pending: page-1-overview.png</span>
+        <span class="pending-note"><svg class="feat-model" viewBox="0 0 760 330" role="img"
+        aria-label="Data model: Dim_date, Dim_Contracts and Dim_Contract_stages across the top; Fact_Contract and Fact_Contract_stages below. Dim_date to Fact_Contract has an active relationship on request date and an inactive one on completion date. Dim_Contracts relates to both facts. Dim_Contract_stages relates to Fact_Contract_stages. No fact-to-fact relationship.">
+        <g stroke-width="1.6" fill="none">
+          <line x1="135" y1="74" x2="225" y2="250" stroke="var(--ink)"/>
+          <line x1="85" y1="74" x2="175" y2="250" stroke="var(--predicted)" stroke-dasharray="6 5"/>
+          <line x1="360" y1="74" x2="275" y2="250" stroke="var(--ink)"/>
+          <line x1="400" y1="74" x2="485" y2="250" stroke="var(--ink)"/>
+          <line x1="645" y1="74" x2="555" y2="250" stroke="var(--ink)"/>
+        </g>
+        <g font-size="11" fill="var(--muted)">
+          <text x="196" y="160" fill="var(--ink)">request date</text>
+          <text x="22" y="186" fill="var(--predicted)">completion date</text>
+          <text x="22" y="200" fill="var(--predicted)">(inactive)</text>
+        </g>
+        <g font-size="13" text-anchor="middle">
+          <g><rect x="20" y="20" width="190" height="54" fill="var(--panel-2)" stroke="var(--line)"/><text x="115" y="52" fill="var(--ink)">Dim_date</text></g>
+          <g><rect x="285" y="20" width="190" height="54" fill="var(--panel-2)" stroke="var(--line)"/><text x="380" y="52" fill="var(--ink)">Dim_Contracts</text></g>
+          <g><rect x="550" y="20" width="190" height="54" fill="var(--panel-2)" stroke="var(--line)"/><text x="645" y="52" fill="var(--ink)">Dim_Contract_stages</text></g>
+          <g><rect x="140" y="250" width="190" height="54" fill="var(--panel-2)" stroke="var(--observed)"/><text x="235" y="282" fill="var(--observed)">Fact_Contract</text></g>
+          <g><rect x="430" y="250" width="190" height="54" fill="var(--panel-2)" stroke="var(--observed)"/><text x="525" y="282" fill="var(--observed)">Fact_Contract_stages</text></g>
+        </g>
+      </svg><span class="pn-cap">Data model · 5 tables · dashboard screenshots available on request</span></span>
       </a>
     </article>
 

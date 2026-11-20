@@ -249,11 +249,11 @@ check('case: recommendations labelled', async () => {
 check('case: missing screenshots show placeholders', async () => {
   const p = await page(CASE); await p.waitForTimeout(300);
   const r = await p.evaluate(() => ({
-    shots: [...document.querySelectorAll('.shot')].map(f => ({ src: f.dataset.src, text: f.textContent })),
+    shots: [...document.querySelectorAll('.shot')].map(f => ({ src: f.dataset.src, text: f.innerText })),
     broken: [...document.querySelectorAll('img')].filter(i => i.complete && i.naturalWidth === 0).length,
   }));
   assert(r.shots.length === 2, `expected 2 .shot, got ${r.shots.length}`);
-  for (const s of r.shots) { const name = s.src.split('/').pop(); assert(s.text.includes(name), `placeholder for ${name} missing`); }
+  for (const s of r.shots) assert(/available on request/i.test(s.text), 'missing-screenshot note should be recruiter-safe');
   assert(r.broken === 0, `${r.broken} broken images`);
 });
 check('case: back link resolves on file://', async () => {
@@ -360,6 +360,14 @@ check('cv: PDF is current and clean', async () => {
     assert(t.includes(need), `CV missing "${need}"`);
   const pages = execSync('pdfinfo Harisankar_Sreekumar_Resume.pdf', { cwd: ROOT }).toString().match(/Pages:\s+(\d+)/)[1];
   assert(+pages <= 2, `CV is ${pages} pages`);
+});
+
+check('pages: no work-in-progress notes visible to visitors', async () => {
+  for (const f of [HOME, CASE]) {
+    const p = await page(f); await p.waitForTimeout(300);
+    const t = await p.evaluate(() => document.body.innerText);
+    assert(!/screenshot pending|pending:|blur faculty/i.test(t), `${f}: visible pending/blur note`);
+  }
 });
 
 // ---------------- runner ----------------
